@@ -10,6 +10,10 @@ import SwiftUI
 
 extension View {
     @ViewBuilder
+    func shadowC(color: Color = .black.opacity(0.3), radius: CGFloat, x: CGFloat = 0, y: CGFloat = 0) -> some View {
+        self // easy way for me to get rid of shadows lol
+    }
+    @ViewBuilder
     func tintC(_ color: Color) -> some View {
         if #available(iOS 15.0, *) {
             self.tint(color)
@@ -122,40 +126,12 @@ extension View {
     }
     @ViewBuilder
     func bgImage(_ appData: AppData? = nil) -> some View {
-//        if hasEntitlement("com.apple.private.security.no-sandbox" as CFString),
-//           let bg = loadWallpapers(appData) {
-//            self.background(
-//                    Image(uiImage: bg)
-//                        .resizable()
-//                        .scaledToFill()
-//                        .edgesIgnoringSafeArea(.top)
-//                        .edgesIgnoringSafeArea(.bottom)
-//                        .overlay(
-//                            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial)).ignoresSafeArea()
-//                        )
-//            )
-//        } else {
-//            self.background(
-//                VStack {
-//                    Image("Default_BG")
-//                        .resizable()
-//                        .scaledToFill()
-//                        .edgesIgnoringSafeArea(.top)
-//                        .edgesIgnoringSafeArea(.bottom)
-//                        .overlay(
-//                            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial)).ignoresSafeArea()
-//                        )
-//                }.edgesIgnoringSafeArea(.top)
-//                    .edgesIgnoringSafeArea(.bottom)
-//                    .frame(width: UIScreen.main.bounds.width)
-//            )
-//        }
         self
     }
     @ViewBuilder
     func mainViewTweaks() -> some View {
         if #available(iOS 15.0, *) {
-            self.foregroundStyle(Color.accentColor).tintC(Color.accentColor)
+            self.foregroundStyle(Color.accentColor)//.tintC(Color.accentColor)
         } else {
             self.foregroundColor(Color.accentColor)
         }

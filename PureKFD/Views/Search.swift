@@ -46,12 +46,12 @@ struct SearchView: View {
                     .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
                     .padding(.vertical, 5)
                     .autocorrectionDisabled()
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.accentColor, lineWidth: 1)
                             .padding(.horizontal)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     )
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -74,7 +74,7 @@ struct SearchView: View {
                                                         .stroke(Color.accentColor, lineWidth: 2)
                                             )
                                     .cornerRadius(15)
-                            }.shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            }.shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                         }
                     }
                     .padding(.horizontal)

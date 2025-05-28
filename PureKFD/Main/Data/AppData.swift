@@ -137,18 +137,34 @@ struct SavedKFDData: Codable, Equatable {
 
 struct defaulturls {
     let urls: [URL] = [
-        // PureKFD Repos
-        URL(string: "https://raw.githubusercontent.com/PureKFD/PureKFDRepo/main/bridge.json")!, // PureKFD Repo - Offical PureKFD Repo
-        URL(string: "https://raw.githubusercontent.com/Dreel0akl/poopypoopermaybeworking/master/Essentials/manifest.json")!, // Poop Repo - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/dora727/KaedeFriedDora/master/bridge.json")!, // MeowRepo - Main & Beta Repo's - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/circularsprojects/circles-repo/main/purekfd.json")!, // Circular's Repo - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/EPOS05/EPOSbox/main/purekfd.json")!, // EPOS Box - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/34306/iPA/main/PureKFD/purekfd.json")!, // Huy's Repo - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/HackZy01/aurora/main/purekfd.json")!, // Aurora - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/YangJiiii/YangJiiii.github.io/main/file/Repo/purekfd.json")!, // YangJiii's Repo - Main Repo - Built for PureKFD
-        URL(string: "https://raw.githubusercontent.com/dobabaophuc1706/misakarepo/main/purekfd.json")!, // Phuc Do's Repo - Main Repo - Built for PureKFD
+//        // PureKFD Repos
+//        URL(string: "https://raw.githubusercontent.com/PureKFD/PureKFDRepo/main/bridge.json")!, // PureKFD Repo - Offical PureKFD Repo
+//        URL(string: "https://raw.githubusercontent.com/dora727/KaedeFriedDora/master/bridge.json")!, // MeowRepo - Main & Beta Repo's - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/circularsprojects/circles-repo/main/purekfd.json")!, // Circular's Repo - Main Repo - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/EPOS05/EPOSbox/main/purekfd.json")!, // EPOS Box - Main Repo - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/34306/iPA/main/PureKFD/purekfd.json")!, // Huy's Repo - Main Repo - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/HackZy01/aurora/main/purekfd.json")!, // Aurora - Main Repo - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/YangJiiii/YangJiiii.github.io/main/file/Repo/purekfd.json")!, // YangJiii's Repo - Main Repo - Built for PureKFD
+//        URL(string: "https://raw.githubusercontent.com/dobabaophuc1706/misakarepo/main/purekfd.json")!, // Phuc Do's Repo - Main Repo - Built for PureKFD
+//        // Picasso Repos
+//        URL(string: "https://raw.githubusercontent.com/sourcelocation/Picasso-test-repo/main/manifest.json")!, // Beta Picasso Repo
+//        URL(string: "https://bomberfish.ca/PicassoRepos/Essentials/manifest.json")! // Main Picasso Repo
+        // PureKFD/PureKFD Repos
+        URL(string: "https://raw.githubusercontent.com/Lrdsnow/PureKFDRepo/main/v6/repo.json")!, // PureKFD v6 Repo
+        URL(string: "https://raw.githubusercontent.com/PureKFD/PureKFDRepo/main/repo.json")!, // PureKFD v5 Repo
+        URL(string: "https://raw.githubusercontent.com/dora727/doworarepo/master/Essentials/manifest.json")!, // MeowRepo - Built for PureKFD v6
+        URL(string: "https://raw.githubusercontent.com/Lrdsnow/SnowRepo/refs/heads/main/v6/repo.json")!, // SnowRepo - Built for PureKFD v6
+        URL(string: "https://raw.githubusercontent.com/jailbreakdotparty/jailbreak.party-repo/refs/heads/main/v6/repo.json")!, // Jailbreak.party - Built for PureKFD v6
+        URL(string: "https://raw.githubusercontent.com/lunginspector/SparseTweaks/refs/heads/main/v6/repo.json")!, // SparseTweaks - Built for PureKFD v6
+        URL(string: "https://raw.githubusercontent.com/circularsprojects/circles-repo/main/purekfd.json")!, // Circular's Repo - Built for PureKFD
+        URL(string: "https://raw.githubusercontent.com/EPOS05/EPOSbox/main/purekfd.json")!, // EPOS Box - Built for PureKFD
+        URL(string: "https://raw.githubusercontent.com/34306/iPA/main/PureKFD/purekfd.json")!, // Huy's Repo - Built for PureKFD
+        URL(string: "https://raw.githubusercontent.com/HackZy01/aurora/main/purekfd.json")!, // Aurora - Built for PureKFD
+        URL(string: "https://raw.githubusercontent.com/YangJiiii/YangJiiii.github.io/main/file/Repo/purekfd.json")!, // YangJiii's Repo - Built for PureKFD
+        URL(string: "https://raw.githubusercontent.com/dobabaophuc1706/misakarepo/main/purekfd.json")!, // Phuc Do's Repo - Built for PureKFD
         // Picasso Repos
         URL(string: "https://raw.githubusercontent.com/sourcelocation/Picasso-test-repo/main/manifest.json")!, // Beta Picasso Repo
-        URL(string: "https://bomberfish.ca/PicassoRepos/Essentials/manifest.json")! // Main Picasso Repo
+        URL(string: "https://raw.githubusercontent.com/BomberFish/PicassoRepos/master/Essentials/manifest.json")!, // Main Picasso Repo
+        URL(string: "https://raw.githubusercontent.com/BomberFish/PicassoRepos/master/CabinFever/manifest.json")! // Cabin Fever
     ]
 }

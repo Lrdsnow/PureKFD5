@@ -108,7 +108,7 @@ struct ContentView: View {
         MainView()
             .mainViewTweaks()
             .plainList()
-            .accentColor(Color(UIColor(hex: UserDefaults.standard.string(forKey: "accentColor") ?? "") ?? UIColor(hex: "#E3CCF8")!))
+            //.accentColor(Color(UIColor(hex: UserDefaults.standard.string(forKey: "accentColor") ?? "") ?? UIColor(hex: "#E3CCF8")!))
             .clearBackground()
             .environmentObject(appData)
             .onAppear {
@@ -166,9 +166,9 @@ struct ContentView: View {
                 #endif
                 try? FileManager.default.removeItem(at: URL.documents.appendingPathComponent("temp")) // clear temp
             }
-            .if(!appData.UserData.allowlight) { view in
-                view.preferredColorScheme(.dark)
-            }
+//            .if(!appData.UserData.allowlight) { view in
+//                view.preferredColorScheme(.dark)
+//            }
     }
 }
 
@@ -177,9 +177,6 @@ struct ContentView: View {
 struct MainView: View {
     @EnvironmentObject var appData: AppData
     @State private var showSetup = false
-    @State private var showSetup_Design = false
-    @State private var showSetup_Exploit = false
-    @State private var showSetup_Finalize = false
     @State private var selectedTab: Int = 0
     // Setup
     @State private var downloadingRepos = false
@@ -190,94 +187,88 @@ struct MainView: View {
     @State private var lock = false
     
     var body: some View {
-        
-        TabView(selection: $selectedTab) {
-            if #available(iOS 15.0, *) {
-                HomeView(showSetup: $showSetup, updated: $updated, mainView: self)
-                    .tabItem {
-                        Image("home_icon")
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .onTapGesture {haptic()}
-                        Text("Home")
-                    }.tag(0)
-            }
-            BrowseView()
-                .tabItem {
-                    Image("browse_icon")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .onTapGesture {haptic()}
-                    Text("Browse")
-                }.tag(1)
-            InstalledView()
-                .tabItem {
-                    Image("installed_icon")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .onTapGesture {haptic()}
-                    Text("Installed")
-                }.tag(2)
-            if #available(iOS 15.0, *) {
-                SearchView()
-                    .tabItem {
-                        Image("search_icon")
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .onTapGesture {haptic()}
-                        Text("Search")
-                    }.tag(3)
-            }
-        }.onAppear() {
-            if FileManager.default.fileExists(atPath: URL.documents.appendingPathComponent("apply.lock").path) {
-                lock = true
-            }
-            if appData.reloading_browse {
-                selectedTab = 1
-            }
-            if #available(iOS 15.0, *) {
-                if !FileManager.default.fileExists(atPath: URL.documents.appendingPathComponent("config/setup_done").path) {
-                    showSetup = true
-                    updateRepos()
+        ZStack {
+            if showSetup {
+                if #available(iOS 15.0, *) {
+                    FirstTimeLoadingView(isLoading: $showSetup, appColors: $appData.appColors, mainView: self)
+                        .transition(.opacity)
                 }
+            } else {
+                TabView(selection: $selectedTab) {
+                    if #available(iOS 15.0, *) {
+                        HomeView(showSetup: $showSetup, updated: $updated, mainView: self)
+                            .tabItem {
+                                Image("home_icon")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .onTapGesture {haptic()}
+                                Text("Home")
+                            }.tag(0)
+                    }
+                    BrowseView()
+                        .tabItem {
+                            Image("browse_icon")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .onTapGesture {haptic()}
+                            Text("Browse")
+                        }.tag(1)
+                    InstalledView()
+                        .tabItem {
+                            Image("installed_icon")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .onTapGesture {haptic()}
+                            Text("Installed")
+                        }.tag(2)
+                    if #available(iOS 15.0, *) {
+                        SearchView()
+                            .tabItem {
+                                Image("search_icon")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .onTapGesture {haptic()}
+                                Text("Search")
+                            }.tag(3)
+                        if appData.UserData.dev {
+                            DeveloperView()
+                                .tabItem {
+                                    Image("plus_icon")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                    Text("More")
+                                }.tag(4)
+                        }
+                    }
+                }.onAppear() {
+                    if FileManager.default.fileExists(atPath: URL.documents.appendingPathComponent("apply.lock").path) {
+                        lock = true
+                    }
+                    if appData.reloading_browse {
+                        selectedTab = 1
+                    }
+                    if #available(iOS 15.0, *) {
+                        if !FileManager.default.fileExists(atPath: URL.documents.appendingPathComponent("config/setup_done").path) {
+                            showSetup = true
+                            updateRepos()
+                        }
+                    }
+                    updated = pkfdUpdated()
+                }
+                .sheet(isPresented: $lock, content: {
+                    if #available(iOS 15.0, *) {
+                        NavigationView {
+                            IssueView(lock: $lock)
+                        }
+                    }
+                }).onChange(of: lock, perform: { newValue in if !newValue { try? FileManager.default.removeItem(at: URL.documents.appendingPathComponent("apply.lock")) }})
             }
-            updated = pkfdUpdated()
         }
-        .sheet(isPresented: $showSetup) {
-            if #available(iOS 15.0, *) {
-                NavigationView {
-                    SetupView(showSetup: $showSetup, showSetup_Design: $showSetup_Design, downloadingRepos: $downloadingRepos, downloadingRepos_Status: $downloadingRepos_Status).blurredBG()
-                }.interactiveDismissDisabledC().blurredBG()
-            }
-        }.sheet(isPresented: $showSetup_Design) {
-            if #available(iOS 15.0, *) {
-                NavigationView {
-                    SetupView_Design(showSetup_Design: $showSetup_Design, showSetup_Exploit: $showSetup_Exploit, downloadingRepos: $downloadingRepos, downloadingRepos_Status: $downloadingRepos_Status, showDownloadingRepos: .constant(true), appColors: $appData.appColors).blurredBG()
-                }.interactiveDismissDisabledC().blurredBG()
-            }
-        }.sheet(isPresented: $showSetup_Exploit) {
-            if #available(iOS 15.0, *) {
-                NavigationView {
-                    SetupView_Exploit(showSetup_Exploit: $showSetup_Exploit, showSetup_Finalize: $showSetup_Finalize, downloadingRepos: $downloadingRepos, downloadingRepos_Status: $downloadingRepos_Status, showDownloadingRepos: .constant(true), settings: false, appData: _appData).blurredBG()
-                }.interactiveDismissDisabledC().blurredBG()
-            }
-        }.sheet(isPresented: $showSetup_Finalize) {
-            if #available(iOS 15.0, *) {
-                NavigationView {
-                    SetupView_Finalize(showSetup_Finalize: $showSetup_Finalize, downloadingRepos: $downloadingRepos, downloadingRepos_Status: $downloadingRepos_Status, appColors: $appData.appColors, mainView: self, appData: _appData).blurredBG()
-                }.interactiveDismissDisabledC().blurredBG()
-            }
-        }.sheet(isPresented: $lock, content: {
-            if #available(iOS 15.0, *) {
-                NavigationView {
-                    IssueView(lock: $lock)
-                }.blurredBG()
-            }
-        }).onChange(of: lock, perform: { newValue in if !newValue { try? FileManager.default.removeItem(at: URL.documents.appendingPathComponent("apply.lock")) }})
     }
     
     func updateRepos() {

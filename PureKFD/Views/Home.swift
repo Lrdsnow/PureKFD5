@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftKFD_objc
+import NukeUI
 
 extension NSLock {
     func synchronized<T>(_ closure: () throws -> T) rethrows -> T {
@@ -46,7 +47,7 @@ struct HomeView: View {
                                 .font(.headline)
                                 .padding(.horizontal)
                         }.tintC(.accentColor).buttonStyle(.bordered).controlSize(.large).hideListRowSeparator()
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2).listRowBackground(appData.appColors.background)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2).listRowBackground(appData.appColors.background)
                     }
                     
                     // Featured Packages
@@ -257,6 +258,139 @@ struct PlaceholderFeaturedView: View {
 }
 
 @available(iOS 15.0, *)
+struct DeviceRow: View {
+    @State private var deviceInfo = CachedDeviceInfo.shared
+    
+    var body: some View {
+        Section("Device Info") {
+            HStack {
+                // Device image
+                AsyncImage(url: URL(string: "https://ipsw.me/assets/devices/\(deviceInfo.modelName).png")) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                }
+                .frame(width: 80, height: 80)
+                .cornerRadius(11)
+                .padding(.trailing, 8)
+                
+                // Device info
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(deviceInfo.prettyModel)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                    
+                    Text("\(deviceInfo.modelName) (\(deviceInfo.cpu))")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .opacity(0.8)
+                        .lineLimit(1)
+                    
+                    Text("\(deviceInfo.osString) \(deviceInfo.version)\(deviceInfo.build.isEmpty ? "" : " (\(deviceInfo.build))")")
+                        .font(.subheadline)
+                        .opacity(0.7)
+                        .lineLimit(1)
+                    
+                    Text("App v\(deviceInfo.appVersion)")
+                        .font(.subheadline)
+                        .opacity(0.7)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+            }
+            .tintC(.accentColor)
+            .foregroundColor(.accentColor)
+            .listBG()
+        }
+    }
+}
+
+class CachedDeviceInfo: ObservableObject {
+    static let shared = CachedDeviceInfo()
+    
+    let modelName: String
+    let prettyModel: String
+    let cpu: String
+    let osString: String
+    let version: String
+    let build: String
+    let appVersion: String
+    
+    private init() {
+        #if targetEnvironment(simulator)
+        self.modelName = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "Unknown"
+        #else
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        self.modelName = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        #endif
+        self.version = UIDevice.current.systemVersion
+        self.osString = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
+        let systemVersion = ProcessInfo.processInfo.operatingSystemVersionString
+        let pattern = "\\(Build (.*)\\)"
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let nsString = systemVersion as NSString
+            let results = regex.matches(in: systemVersion, range: NSRange(location: 0, length: nsString.length))
+            if let match = results.first {
+                let buildNumberRange = match.range(at: 1)
+                self.build = nsString.substring(with: buildNumberRange)
+            } else {
+                self.build = ""
+            }
+        } else {
+            self.build = ""
+        }
+        self.appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        self.cpu = Self.getCPU(for: modelName)
+        self.prettyModel = Self.getPrettyModel(for: modelName)
+    }
+    
+    private static func getCPU(for model: String) -> String {
+        let processorDict: [String: String] = [
+            "iPhone8,1": "A9", "iPhone8,2": "A9", "iPhone8,4": "A9",
+            "iPhone9,1": "A10", "iPhone9,2": "A10", "iPhone9,3": "A10", "iPhone9,4": "A10",
+            "iPhone10,1": "A11", "iPhone10,2": "A11", "iPhone10,3": "A11", "iPhone10,4": "A11", "iPhone10,5": "A11", "iPhone10,6": "A11",
+            "iPhone11,2": "A12", "iPhone11,4": "A12", "iPhone11,6": "A12", "iPhone11,8": "A12",
+            "iPhone12,1": "A13", "iPhone12,3": "A13", "iPhone12,5": "A13", "iPhone12,8": "A13",
+            "iPhone13,1": "A14", "iPhone13,2": "A14", "iPhone13,3": "A14", "iPhone13,4": "A14",
+            "iPhone14,2": "A15", "iPhone14,3": "A15", "iPhone14,4": "A15", "iPhone14,5": "A15", "iPhone14,6": "A15", "iPhone14,7": "A15", "iPhone14,8": "A15",
+            "iPhone15,2": "A16", "iPhone15,3": "A16", "iPhone15,4": "A16", "iPhone15,5": "A16",
+            "iPhone16,1": "A17", "iPhone16,2": "A17",
+            "iPad13,4": "M1", "iPad13,5": "M1", "iPad13,6": "M1", "iPad13,7": "M1",
+            "iPad14,3": "M2", "iPad14,4": "M2", "iPad14,5": "M2", "iPad14,6": "M2",
+            "iPad16,3": "M4", "iPad16,4": "M4", "iPad16,5": "M4", "iPad16,6": "M4"
+        ]
+        
+        return processorDict[model] ?? "Unknown"
+    }
+    
+    private static func getPrettyModel(for model: String) -> String {
+        let modelDict: [String: String] = [
+            "iPhone8,1": "iPhone 6s", "iPhone8,2": "iPhone 6s Plus", "iPhone8,4": "iPhone SE (1st gen)",
+            "iPhone9,1": "iPhone 7", "iPhone9,2": "iPhone 7 Plus", "iPhone9,3": "iPhone 7", "iPhone9,4": "iPhone 7 Plus",
+            "iPhone10,1": "iPhone 8", "iPhone10,2": "iPhone 8 Plus", "iPhone10,3": "iPhone X", "iPhone10,4": "iPhone 8", "iPhone10,5": "iPhone 8 Plus", "iPhone10,6": "iPhone X",
+            "iPhone11,2": "iPhone XS", "iPhone11,4": "iPhone XS Max", "iPhone11,6": "iPhone XS Max", "iPhone11,8": "iPhone XR",
+            "iPhone12,1": "iPhone 11", "iPhone12,3": "iPhone 11 Pro", "iPhone12,5": "iPhone 11 Pro Max", "iPhone12,8": "iPhone SE (2nd gen)",
+            "iPhone13,1": "iPhone 12 mini", "iPhone13,2": "iPhone 12", "iPhone13,3": "iPhone 12 Pro", "iPhone13,4": "iPhone 12 Pro Max",
+            "iPhone14,2": "iPhone 13 Pro", "iPhone14,3": "iPhone 13 Pro Max", "iPhone14,4": "iPhone 13 mini", "iPhone14,5": "iPhone 13", "iPhone14,6": "iPhone SE (3rd gen)", "iPhone14,7": "iPhone 14", "iPhone14,8": "iPhone 14 Plus",
+            "iPhone15,2": "iPhone 14 Pro", "iPhone15,3": "iPhone 14 Pro Max", "iPhone15,4": "iPhone 15", "iPhone15,5": "iPhone 15 Plus",
+            "iPhone16,1": "iPhone 15 Pro", "iPhone16,2": "iPhone 15 Pro Max"
+        ]
+        
+        return modelDict[model] ?? model
+    }
+}
+
+@available(iOS 15.0, *)
 struct SettingsView: View {
     @EnvironmentObject var appData: AppData
     @State private var selectedColorString: String = "#E3CCF8"
@@ -269,6 +403,8 @@ struct SettingsView: View {
     
     var body: some View {
         List {
+            
+            DeviceRow()
             
             ExploitPickers()
             
@@ -293,31 +429,31 @@ struct SettingsView: View {
                 .onChange(of: appData.UserData.exploit_method) {_ in appData.save()}
                 .listBG()
                 
-                ColorPicker("Accent Color", selection: $selectedColor)
-                    .onChange(of: selectedColor) { newValue in
-                        selectedColorString = newValue.toHex()
-                        UserDefaults.standard.set(selectedColorString, forKey: "accentColor")
-                        refreshView(appData: appData)
-                    }.listBG()
+//                ColorPicker("Accent Color", selection: $selectedColor)
+//                    .onChange(of: selectedColor) { newValue in
+//                        selectedColorString = newValue.toHex()
+//                        UserDefaults.standard.set(selectedColorString, forKey: "accentColor")
+//                        refreshView(appData: appData)
+//                    }.listBG()
                 
-                Toggle(isOn: $appData.UserData.allowlight, label: {
-                    Text("Allow Light Mode")
-                }).onChange(of: appData.UserData.allowlight) { _ in
-                    appData.save()
-                }.listBG()
+//                Toggle(isOn: $appData.UserData.allowlight, label: {
+//                    Text("Allow Light Mode")
+//                }).onChange(of: appData.UserData.allowlight) { _ in
+//                    appData.save()
+//                }.listBG()
                 
                 Toggle("Translate Prefs On Install", isOn: $appData.UserData.translateoninstall)
                     .onChange(of: appData.UserData.translateoninstall) { _ in
                         appData.save()
-                    }.listBG()
+                    }.listBG().tintC(.accentColor)
                 Toggle("Use BuiltIn File Picker", isOn: $appData.UserData.PureKFDFilePicker)
                     .onChange(of: appData.UserData.PureKFDFilePicker) { _ in
                         appData.save()
-                    }.listBG()
+                    }.listBG().tintC(.accentColor)
                 Toggle("Developer Mode", isOn: $appData.UserData.dev)
                     .onChange(of: appData.UserData.dev) { _ in
                         appData.save()
-                    }.listBG()
+                    }.listBG().tintC(.accentColor)
                 NavigationLink(destination: IconSelectorView(), label: {
                     Text("Change Icon")
                 }).listBG()
@@ -439,7 +575,6 @@ struct ExploitPickers: View {
                 }
             }
         }
-        .listRowSeparator(.hidden)
         .onChange(of: appData.UserData.kfd) {_ in appData.save()}
     }
 }
@@ -460,7 +595,7 @@ struct CreditView: View {
             CreditRow(name: "@hackzy", role: "Icon/Tweak Creator", link: URL(string: "https://discord.com/users/424899221267939328")).foregroundStyle(.green)
             CreditRow(name: "@dreelpoop_er", role: "Icon/Tweak Creator", link: URL(string: "https://discord.com/users/669665537051197491")).foregroundStyle(.red)
             CreditRow(name: "Oliver Tzeng（曾嘉禾）", role: "Translator", link: URL(string: "https://github.com/olivertzeng")).foregroundStyle(.red)
-            CreditRow(name: "@lunginspector", role: "Icon Creator", link: URL(string: "https://discord.com/users/1070904865657729035")).foregroundStyle(.red)
+            CreditRow(name: "@lunginspector", role: "Icon Creator", link: URL(string: "https://discord.com/users/1099903964801151030")).foregroundStyle(.red)
             CreditRow(name: "@k3wl.4id", role: "Icon Creator", link: URL(string: "https://discord.com/users/717985587235258388")).foregroundStyle(.brown)
             CreditRow(name: "@_severalpeople_", role: "Icon Creator", link: URL(string: "https://discord.com/users/995151326264705074")).foregroundStyle(.brown)
             CreditRow(name: "@mildpeppercat", role: "Icon Creator", link: URL(string: "https://discord.com/users/822833988997218314")).foregroundStyle(.red)
@@ -523,7 +658,7 @@ struct IconSelectorView: View {
                                         NSLog("%@", iconName)
                                         setAppIcon(iconName)
                                     }) {
-                                        Image(uiImage: UIImage(named: iconName) ?? UIImage())
+                                        Image(uiImage: loadIconImage(iconName))
                                             .renderingMode(.original)
                                             .resizable()
                                             .frame(width: 80, height: 80)
@@ -545,8 +680,17 @@ struct IconSelectorView: View {
                         }
                     }
                 }
-            }.listRowBackground(Color.clear)
+            }.listRowBackground(Color.clear).hideListRowSeparator()
         }.navigationTitle("Icons").bgImage(appData).listBG().listStyle(.plain).clearBG()
+    }
+    
+    // Use the pngs!
+    private func loadIconImage(_ iconName: String) -> UIImage {
+        if let path = Bundle.main.path(forResource: iconName + "60x60@2x", ofType: "png"),
+           let image = UIImage(contentsOfFile: path) {
+            return image
+        }
+        return UIImage(named: iconName) ?? UIImage()
     }
     
     private func setAppIcon(_ iconName: String) {

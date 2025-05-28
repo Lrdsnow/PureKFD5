@@ -315,17 +315,17 @@ struct RepoRow: View {
             } }
                 .frame(width: 43, height: 43)
                 .cornerRadius(8)
-                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
             
             VStack(alignment: .leading) {
                 Text(reponame ?? "Unknown Repo Name")
                     .font(.headline)
                     .foregroundColor(Color.accentColor)
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 Text(repodesc ?? "Unknown Repo Description")
                     .font(.subheadline)
                     .foregroundColor(Color.accentColor.opacity(0.7))
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
             }
         }.contextMenu(menuItems: {
             if repo != nil {
@@ -391,7 +391,7 @@ struct PkgRow: View {
                 .frame(width: 50, height: 50)
                 .cornerRadius(8)
                 .opacity(pkg?.disabled ?? false && installedPackageView == true ? 0.5 : 1.0)
-                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
             
             VStack(alignment: .leading) {
                 Text(pkgname ?? "Unknown Package Name")
@@ -399,7 +399,7 @@ struct PkgRow: View {
                     .lineLimit(1)
                     .foregroundColor(Color.accentColor)
                     .opacity(pkg?.disabled ?? false && installedPackageView == true ? 0.5 : 1.0)
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     .minimumScaleFactor(0.6)
                 
                 Text(String(pkgauthor ?? "Unknown Package Author") + " v" + String(pkg?.version ?? "0") + "\((pkg?.beta ?? false) ? " (Beta)" : "")")
@@ -407,7 +407,7 @@ struct PkgRow: View {
                     .lineLimit(1)
                     .foregroundColor(Color.accentColor)
                     .opacity(pkg?.disabled ?? false && installedPackageView == true ? 0.3 : 0.5)
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     .minimumScaleFactor(0.6)
                 
                 Text(pkg?.desc ?? "")
@@ -417,19 +417,18 @@ struct PkgRow: View {
                     .padding(.top, -10)
                     .frame(height: 8)
                     .opacity(pkg?.disabled ?? false && installedPackageView == true ? 0.4 : 0.7)
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     .minimumScaleFactor(0.6)
             }
             
-            HStack() {
-                if pkg != nil && !installedPackageView {
-                    if isPackageInstalled(pkg?.bundleID ?? "") {
-                        Image(systemName: "checkmark.circle.fill")
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
-                    } else {
-                        Image(systemName: "circle")
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
-                    }
+            if pkg != nil && !installedPackageView {
+                Spacer()
+                if isPackageInstalled(pkg?.bundleID ?? "") {
+                    Image(systemName: "checkmark.circle.fill")
+                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                } else {
+                    Image(systemName: "circle")
+                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 }
             }
         }
@@ -477,7 +476,7 @@ struct FeaturedPackagesView: View {
                                 packageShowName: package.showname ?? true,
                                 homeView: homeView,
                                 square: package.square ?? false
-                            ).shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            ).shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                         }.background(Color.clear).listRowBackground(Color.clear)
                     }
                 }
@@ -523,7 +522,7 @@ struct FeaturedPackageView: View {
                         .padding([.leading], homeView ? 1 : -1)
                         .padding([.bottom], homeView ? 1 : 4)
                         .font(homeView ? .title.weight(.bold) : .title2.weight(.bold))
-                        .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 4)
+                        .shadowC(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 4)
                         .foregroundStyle(Color(UIColor(hex: packageFontColor) ?? UIColor.white))
                 }
             }

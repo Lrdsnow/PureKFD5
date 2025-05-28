@@ -131,7 +131,7 @@ struct PackageDetailView: View {
                                         .scaledToFit()
                                 } }
                                 .frame(width: UIScreen.main.bounds.width-30, height: 180)
-                                .shadow(color: Color.black.opacity(0.7), radius: 5, x: 3, y: 5)
+                                .shadowC(color: Color.black.opacity(0.7), radius: 5, x: 3, y: 5)
                             //.clipped()
                                 .cornerRadius(15)
                             
@@ -170,7 +170,7 @@ struct PackageDetailView: View {
                             .frame(width: 118, height: 118)
                             .cornerRadius(20)
                             .padding(.leading)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                             .contextMenu(menuItems: {
                                 Button(action: {
                                     let pasteboard = UIPasteboard.general
@@ -187,7 +187,7 @@ struct PackageDetailView: View {
                             .scaledToFit()
                             .frame(width: 120, height: 120)
                             .cornerRadius(10)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                             .padding(.leading)
                     }
                     
@@ -195,21 +195,21 @@ struct PackageDetailView: View {
                         Text(package.name)
                             .font(.title2)
                             .fontWeight(.bold)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                             .minimumScaleFactor(0.6)
                         
                         Text("By \(package.author) v\(String(package.version ?? ""))" + (package.path?.isFileURL ?? false ? " (local)" : ""))
                             .font(.subheadline)
                             .foregroundColor(Color.accentColor.opacity(0.7))
                             .lineLimit(1)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                             .minimumScaleFactor(0.6)
                         
                         Text(package.desc)
                             .font(.footnote)
                             .foregroundColor(Color.accentColor.opacity(0.7))
                             .lineLimit(1)
-                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                            .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                             .minimumScaleFactor(0.6)
                         
                         Spacer()
@@ -234,7 +234,7 @@ struct PackageDetailView: View {
                                     .background(isDownloading || isInstalled || isExtracting || downloadFailed ? Color.accentColor.opacity(0.7) : Color.accentColor)
                                     .cornerRadius(20)
                             }
-                        }.shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2).onAppear() {isInstalled = isPackageInstalled(package.bundleID)}.contextMenu(menuItems: {
+                        }.shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2).onAppear() {isInstalled = isPackageInstalled(package.bundleID)}.contextMenu(menuItems: {
                             if package.pkgtype == "legacyencrypted" && !isInstalled {
                                 ForEach(package.versions?.keys.sorted() ?? [], id: \.self) { versionKey in
                                     if let release = package.versions?[versionKey] {
@@ -270,11 +270,11 @@ struct PackageDetailView: View {
                         .font(.title3)
                         .fontWeight(.bold)
                         .padding(.horizontal)
-                        .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     Text(package.longdesc ?? "")
                         .padding(.horizontal)
                         .font(.body)
-                        .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 }
                 
                 Rectangle()
@@ -287,7 +287,7 @@ struct PackageDetailView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.horizontal)
-                        .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                         
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -308,7 +308,7 @@ struct PackageDetailView: View {
                                                 .scaledToFit()
                                         } }
                                         .frame(width: 185, height: 400)
-                                        .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                                        .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                                         .cornerRadius(10)
                                         .contextMenu(menuItems: {
                                             Button(action: {

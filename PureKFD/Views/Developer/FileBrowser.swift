@@ -287,11 +287,11 @@ struct FileListFolderItemView: View {
             Image("folder_icon")
                 .resizable()
                 .renderingMode(.template)
-                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 .aspectRatio(contentMode: .fit).frame(maxHeight: 50)
             VStack(alignment: .leading) {
                 Text((UUID(uuidString: item) != nil) ? (try? getBundleID(path: path, uuid: item, exploit_method: kfd ? 0 : 1)) ?? "" : item)
-                    .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                    .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                     .contextMenu {
                         Button(action: {
                             isInfoPresented = true
@@ -405,10 +405,10 @@ struct FileListFileItemView: View {
             Image("file_icon")
                 .resizable()
                 .renderingMode(.template)
-                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 .aspectRatio(contentMode: .fit).frame(maxHeight: 50)
             Text(item)
-                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
+                .shadowC(color: Color.black.opacity(0.5), radius: 3, x: 1, y: 2)
                 .contextMenu {
                     Button(action: {
                         isInfoPresented = true
